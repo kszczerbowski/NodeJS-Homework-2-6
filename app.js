@@ -19,7 +19,7 @@ app.get("/", (_, res) => {
 });
 
 app.use((_, res) => {
-  res.status(404).json({ message: "Page not found" });
+  res.status(404).json({ message: "Not found" });
 });
 
 app.use((err, _, res) => {

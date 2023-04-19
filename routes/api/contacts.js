@@ -33,7 +33,7 @@ router.get("/:contactId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { error, contact } = newContactSchema.validate(req.body);
+  const { error, value: contact } = newContactSchema.validate(req.body);
   if (_.isEmpty(req.body)) {
     res.status(400).json({ message: "missing request body" });
     return;
@@ -74,7 +74,7 @@ router.put("/:contactId", async (req, res) => {
     res.status(400).json({ message: "missing request body" });
     return;
   }
-  const { error, contact } = updatedContactSchema.validate(req.body);
+  const { error, value: contact } = updatedContactSchema.validate(req.body);
   if (error !== undefined) {
     res.status(400).json({ message: "missing properties" });
     return;
