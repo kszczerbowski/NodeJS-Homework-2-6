@@ -1,9 +1,8 @@
-const express = require("express");
-const logger = require("morgan");
+import express from 'express';
+import logger from 'morgan';
+import { router as contactsRouter } from './api/index.js';
 
-const contactsRouter = require("./api/index.js");
-
-const app = express();
+export const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
@@ -23,5 +22,3 @@ app.use((_, res) => {
 app.use((err, _, res) => {
   res.status(500).json({ message: err.message });
 });
-
-module.exports = app;

@@ -1,7 +1,6 @@
-const Contact = require("./schemas/contact.js");
+import { Contact } from "./schemas/contact.js";
 
-const addContact = ({ name, phone, email, favorite }) =>
-  Contact.create({ name, phone, email, favorite });
+const addContact = ({ name, phone, email, favorite }) => Contact.create({ name, phone, email, favorite });
 
 const getAllContacts = () => Contact.find({});
 
@@ -15,12 +14,12 @@ const updateContact = (id, contact) => Contact.findOneAndUpdate({ _id: id }, con
 
 const updateContactFavorite = (id, body) => Contact.findOneAndUpdate({ _id: id }, { favorite: body.favorite }, { new: true });
 
-module.exports = {
+export default {
   addContact,
   getAllContacts,
   getContactById,
+  getAllIds,
   removeContact,
   updateContact,
-  updateContactFavorite,
-  getAllIds,
-};
+  updateContactFavorite
+}

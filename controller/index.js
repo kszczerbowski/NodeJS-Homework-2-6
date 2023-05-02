@@ -1,15 +1,9 @@
-const service = require("../service/index.js");
-const {
-  newContactSchema,
-  updatedContactSchema,
-  updatedContactSchemaFavorite,
-} = require("./joiSchemas.js");
-const { validateId } = require("./nativeValidation.js");
+import service from '../service/index.js';
+import { newContactSchema, updatedContactSchema, updatedContactSchemaFavorite } from './joiSchemas.js';
+import { validateId } from './nativeValidation.js';
 
 const add = async (req, res, next) => {
-  const { error, value: newContactValues } = newContactSchema.validate(
-    req.body
-  );
+  const { error, value: newContactValues } = newContactSchema.validate(req.body);
 
   if (error !== undefined)
     return res.status(400).json({
@@ -163,11 +157,11 @@ const updateContactFavoriteValue = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   add,
   get,
   getById,
   removeById,
   updateContact,
-  updateContactFavoriteValue,
-};
+  updateContactFavoriteValue
+}

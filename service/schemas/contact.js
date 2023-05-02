@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const { Schema } = require("mongoose");
+import mongoose, { Schema } from "mongoose";
+
 mongoose.set("debug", true);
 
 const contactSchema = new Schema({
@@ -19,6 +19,4 @@ const contactSchema = new Schema({
   },
 });
 
-const Contact = mongoose.model("contact", contactSchema);
-
-module.exports = Contact;
+export const Contact = mongoose.model("contact", contactSchema);

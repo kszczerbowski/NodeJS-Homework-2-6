@@ -1,6 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const controlContact = require("../controller/index.js");
+import express from 'express';
+import controlContact from '../controller/index.js';
+
+export const router = express.Router();
 
 router.post("/", controlContact.add);
 
@@ -13,5 +14,3 @@ router.delete("/:id", controlContact.removeById);
 router.put("/:id", controlContact.updateContact);
 
 router.patch("/:id/favorite", controlContact.updateContactFavoriteValue);
-
-module.exports = router;
