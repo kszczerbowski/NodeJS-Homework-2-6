@@ -1,23 +1,26 @@
 const service = require("../service/index.js");
-const validation = require("./validation.js");
+const {
+  newContactSchema,
+  updatedContactSchema,
+  updatedContactSchemaFavorite,
+} = require("./joiSchemas.js");
+const { validateId } = require("./nativeValidation.js");
 
 const add = async (req, res, next) => {
-  const newContactValues = req.body;
-  const bodyValidationResult = validation.validateBody(
-    newContactValues,
-    "post"
+  const { error, value: newContactValues } = newContactSchema.validate(
+    req.body
   );
 
-  if (bodyValidationResult !== true)
-    return res.json({
+  if (error !== undefined)
+    return res.status(400).json({
       status: "failure",
       code: 400,
-      message: bodyValidationResult,
+      message: "body absent or incorrect",
     });
 
   try {
     const newContact = await service.addContact(newContactValues);
-    return res.json({
+    return res.status(201).json({
       status: "success",
       code: 201,
       data: { newContact },
@@ -31,7 +34,7 @@ const add = async (req, res, next) => {
 const get = async (req, res, next) => {
   try {
     const contacts = await service.getAllContacts();
-    return res.json({
+    return res.status(200).json({
       status: "success",
       code: 200,
       data: { contacts },
@@ -44,17 +47,18 @@ const get = async (req, res, next) => {
 
 const getById = async (req, res, next) => {
   const { id } = req.params;
-  const isIdCorrect = await validation.validateId(id);
+  const isIdCorrect = await validateId(id);
   if (!isIdCorrect)
-    return res.json({
+    return res.status(400).json({
       status: "failure",
       code: 400,
       message: `There's no ID ${id} in the database!`,
     });
+
   try {
     const foundContact = await service.getContactById(id);
     console.log({ foundContact });
-    return res.json({
+    return res.status(200).json({
       status: "success",
       code: 200,
       data: { foundContact },
@@ -67,16 +71,17 @@ const getById = async (req, res, next) => {
 
 const removeById = async (req, res, next) => {
   const { id } = req.params;
-  const isIdCorrect = await validation.validateId(id);
+  const isIdCorrect = await validateId(id);
   if (!isIdCorrect)
-    return res.json({
+    return res.status(400).json({
       status: "failure",
       code: 400,
       message: `There's no ID ${id} in the database!`,
     });
+
   try {
     const removedContact = await service.removeContact(id);
-    return res.json({
+    return res.status(200).json({
       status: "success",
       code: 200,
       data: { removedContact },
@@ -89,30 +94,30 @@ const removeById = async (req, res, next) => {
 
 const updateContact = async (req, res, next) => {
   const { id } = req.params;
-  const isIdCorrect = await validation.validateId(id);
+  const isIdCorrect = await validateId(id);
   if (!isIdCorrect)
-    return res.json({
+    return res.status(400).json({
       status: "failure",
       code: 400,
       message: `There's no ID ${id} in the database!`,
     });
 
-  const bodyValidationResult = validation.validateBody(req.body, "update");
-
-  if (bodyValidationResult !== true)
-    return res.json({
+  const { error, value: updatedContactValues } = updatedContactSchema.validate(
+    req.body
+  );
+  if (error !== undefined)
+    return res.status(400).json({
       status: "failure",
       code: 400,
-      message: bodyValidationResult,
+      message: "body absent or incorrect",
     });
 
   try {
-    const updatedContactValues = req.body;
     const updatedContact = await service.updateContact(
       id,
       updatedContactValues
     );
-    return res.json({
+    return res.status(200).json({
       status: "success",
       code: 200,
       data: { updatedContact },
@@ -125,26 +130,29 @@ const updateContact = async (req, res, next) => {
 
 const updateContactFavoriteValue = async (req, res, next) => {
   const { id } = req.params;
-  const isIdCorrect = await validation.validateId(id);
+  const isIdCorrect = await validateId(id);
   if (!isIdCorrect)
-    return res.json({
+    return res.status(400).json({
       status: "failure",
       code: 400,
       message: `There's no ID ${id} in the database!`,
     });
 
-  const bodyValidationResult = validation.validateBodyForFavoriteUpdate(
-    req.body
-  );
-  if (bodyValidationResult !== "body correct")
-    return res.json({
+  const { error, value: newFavoriteSetting } =
+    updatedContactSchemaFavorite.validate(req.body);
+  if (error !== undefined)
+    return res.status(400).json({
       status: "failure",
       code: 400,
-      message: bodyValidationResult,
+      message: "body absent or incorrect",
     });
+
   try {
-    const updatedContact = await service.updateContactFavorite(id, req.body);
-    return res.json({
+    const updatedContact = await service.updateContactFavorite(
+      id,
+      newFavoriteSetting
+    );
+    return res.status(200).json({
       status: "success",
       code: 200,
       data: { updatedContact },

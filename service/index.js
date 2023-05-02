@@ -11,11 +11,9 @@ const getAllIds = () => Contact.find({}).distinct("_id");
 
 const removeContact = (id) => Contact.findOneAndDelete({ _id: id });
 
-const updateContact = (id, contact) =>
-  Contact.findOneAndUpdate({ _id: id }, contact, { new: true });
+const updateContact = (id, contact) => Contact.findOneAndUpdate({ _id: id }, contact, { new: true });
 
-const updateContactFavorite = (id, body) =>
-  Contact.findOneAndUpdate({ _id: id }, { favorite: body.favorite });
+const updateContactFavorite = (id, body) => Contact.findOneAndUpdate({ _id: id }, { favorite: body.favorite }, { new: true });
 
 module.exports = {
   addContact,

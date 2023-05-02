@@ -103,6 +103,4 @@ const validateBodyForFavoriteUpdate = (body) => {
 
 module.exports = {
   validateId,
-  validateBody,
-  validateBodyForFavoriteUpdate,
 };

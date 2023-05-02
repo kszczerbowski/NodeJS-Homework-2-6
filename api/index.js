@@ -10,7 +10,7 @@ router.get("/:id", controlContact.getById);
 
 router.delete("/:id", controlContact.removeById);
 
-router.patch("/:id", controlContact.updateContact);
+router.put("/:id", controlContact.updateContact);
 
 router.patch("/:id/favorite", controlContact.updateContactFavoriteValue);
 
