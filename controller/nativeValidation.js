@@ -1,5 +1,5 @@
 import _ from "lodash";
-import service from '../service/index.js';
+import service from "../service/index.js";
 
 const ACCEPTED_BODY_PROPERTIES = {
   name: "string",

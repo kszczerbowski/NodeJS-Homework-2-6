@@ -1,6 +1,7 @@
-import express from 'express';
-import logger from 'morgan';
-import { router as contactsRouter } from './api/index.js';
+import express from "express";
+import logger from "morgan";
+import { router as contactsRouter } from "./api/contacts.js";
+import { router as usersRouter } from "./api/users.js";
 
 export const app = express();
 
@@ -10,6 +11,7 @@ app.use(logger(formatsLogger));
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
+app.use("/users", usersRouter);
 
 app.get("/", (_, res) => {
   res.send("Welcome to my app");

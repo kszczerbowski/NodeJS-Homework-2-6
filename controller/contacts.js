@@ -1,15 +1,22 @@
-import service from '../service/index.js';
-import { newContactSchema, updatedContactSchema, updatedContactSchemaFavorite } from './joiSchemas.js';
-import { validateId } from './nativeValidation.js';
+import service from "../service/index.js";
+import {
+  newContactSchema,
+  updatedContactSchema,
+  updatedContactSchemaFavorite,
+} from "./joiSchemas.js";
+import { validateId } from "./nativeValidation.js";
 
 const add = async (req, res, next) => {
-  const { error, value: newContactValues } = newContactSchema.validate(req.body);
+  const { error, value: newContactValues } = newContactSchema.validate(
+    req.body,
+    { abortEarly: false }
+  );
 
-  if (error !== undefined)
+  if (error)
     return res.status(400).json({
       status: "failure",
       code: 400,
-      message: "body absent or incorrect",
+      message: error,
     });
 
   try {
@@ -97,9 +104,10 @@ const updateContact = async (req, res, next) => {
     });
 
   const { error, value: updatedContactValues } = updatedContactSchema.validate(
-    req.body
+    req.body,
+    { abortEarly: false }
   );
-  if (error !== undefined)
+  if (error)
     return res.status(400).json({
       status: "failure",
       code: 400,
@@ -133,8 +141,8 @@ const updateContactFavoriteValue = async (req, res, next) => {
     });
 
   const { error, value: newFavoriteSetting } =
-    updatedContactSchemaFavorite.validate(req.body);
-  if (error !== undefined)
+    updatedContactSchemaFavorite.validate(req.body, { abortEarly: false });
+  if (error)
     return res.status(400).json({
       status: "failure",
       code: 400,
@@ -163,5 +171,5 @@ export default {
   getById,
   removeById,
   updateContact,
-  updateContactFavoriteValue
-}
+  updateContactFavoriteValue,
+};
