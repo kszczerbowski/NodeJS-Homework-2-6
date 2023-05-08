@@ -12,10 +12,17 @@ const strategyOptions = {
 
 passport.use(
   new Strategy(strategyOptions, (payload, done) => {
+    const { jwtFromRequest } = strategyOptions;
     User.findOne({ _id: payload.id })
-      .then((user) =>
-        !user ? done(new Error("No such user!")) : done(null, user)
-      )
+      .then((user) => {
+        if (!user) {
+          return done(new Error("No such user!"));
+        } else {
+          if (user.token !== jwtFromRequest)
+            return res.status(401).json({ message: "Not authorized!" });
+          return done(null, user);
+        }
+      })
       .catch(done);
   })
 );

@@ -8,6 +8,6 @@ router.post("/signup", controlUser.signup);
 
 router.post("/login", controlUser.signin);
 
-router.post("/logout", auth, controlUser.signout);
+router.get("/logout", auth, controlUser.signout);
 
-router.post("/current", auth, controlUser.getCurrentUser);
+router.get("/current", auth, controlUser.getCurrentUser);

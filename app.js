@@ -11,7 +11,7 @@ app.use(logger(formatsLogger));
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
 
 app.get("/", (_, res) => {
   res.send("Welcome to my app");

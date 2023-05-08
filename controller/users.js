@@ -88,20 +88,9 @@ const signin = async (req, res, next) => {
 
 const signout = async (req, res, next) => {
   try {
-    const token = req.headers["authorization"]?.slice(7);
-    const [header, payload, signature] = token.split(".");
-    const decodedPayload = atob(payload);
-    const parsedPayload = JSON.parse(decodedPayload);
-    const idFromToken = parsedPayload.id;
-    const user = await service.getUserById(idFromToken);
-    if (!user)
-      return res.status(401).json({
-        status: "failure",
-        code: 401,
-        message: "Not authorized!",
-      });
-
+    const user = req.user;
     user.token = "";
+    user.save();
     return res.status(204).json();
   } catch (error) {
     console.error(error);
@@ -111,13 +100,7 @@ const signout = async (req, res, next) => {
 
 const getCurrentUser = async (req, res, next) => {
   try {
-    const token = req.headers["authorization"]?.slice(7);
-    const [header, payload, signature] = token.split(".");
-    const decodedPayload = atob(payload);
-    const parsedPayload = JSON.parse(decodedPayload);
-    const idFromToken = parsedPayload.id;
-    const user = await service.getUserById(idFromToken);
-
+    const user = req.user;
     if (!user)
       return res.status(401).json({
         status: "failure",
@@ -129,7 +112,6 @@ const getCurrentUser = async (req, res, next) => {
       email: user.email,
       subscription: user.subscription,
     };
-
     return res.status(200).json({
       status: "success",
       code: 200,
