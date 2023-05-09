@@ -1,5 +1,5 @@
-const _ = require("lodash");
-const service = require("../service/index.js");
+import _ from "lodash";
+import service from "../service/index.js";
 
 const ACCEPTED_BODY_PROPERTIES = {
   name: "string",
@@ -16,7 +16,7 @@ const REQUEST_TYPES_FOR_BODY_VALIDATION = {
   UPDATE: "update",
 };
 
-const validateId = async (idToValidate) => {
+export const validateId = async (idToValidate) => {
   const correctIdsObjects = await service.getAllIds();
   const correctIds = correctIdsObjects.map((object) => object.toString());
   const isIdCorrect = !!correctIds.filter(
@@ -99,8 +99,4 @@ const validateBodyForFavoriteUpdate = (body) => {
   if (lackingRequiredProperties.length > 0)
     return `Missing fields: ${lackingRequiredProperties.join(", ")}.`;
   return "body correct";
-};
-
-module.exports = {
-  validateId,
 };
