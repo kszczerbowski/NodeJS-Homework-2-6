@@ -1,6 +1,7 @@
 import { Contact } from "./schemas/contact.js";
 import { User } from "./schemas/user.js";
 import bcrypt from "bcryptjs";
+import gravatar from "gravatar";
 
 const addContact = ({ name, phone, email, favorite }) =>
   Contact.create({ name, phone, email, favorite });
@@ -26,10 +27,12 @@ const updateContactFavorite = (id, body) =>
 const addUser = async ({ email, password, subscription }) => {
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
+  const avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
   const newUser = await User.create({
     email,
     password: hashedPassword,
     subscription,
+    avatarURL,
   });
   const { password: pwd, ...userWithoutPassword } = newUser.toObject();
   return userWithoutPassword;

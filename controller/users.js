@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import service from "../service/index.js";
 import { signinUserSchema, signupUserSchema } from "./joiSchemas.js";
+import fs from "fs";
+import Jimp from "jimp";
 
 const signup = async (req, res, next) => {
   const allEmails = await service.getAllEmails();
@@ -101,13 +103,6 @@ const signout = async (req, res, next) => {
 const getCurrentUser = async (req, res, next) => {
   try {
     const user = req.user;
-    if (!user)
-      return res.status(401).json({
-        status: "failure",
-        code: 401,
-        message: "Not authorized!",
-      });
-
     const emailAndSubcriptionInfo = {
       email: user.email,
       subscription: user.subscription,
@@ -123,9 +118,60 @@ const getCurrentUser = async (req, res, next) => {
   }
 };
 
+const updateAvatar = async (req, res, next) => {
+  const { file } = req.body;
+  if (!file)
+    return res.status(400).json({
+      status: "failure",
+      code: 400,
+      message: "You need to pass body with file!",
+    });
+  try {
+    await Jimp.read(req.file.path)
+      .then((file) => {
+        file.resize(250, 250).write(`../public/avatars/${file}`);
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(500).json({
+          status: "failure",
+          code: 500,
+          message: "Error encountered when saving the avatar!",
+        });
+      });
+
+    fs.unlink(`../tmp/${file}`, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          status: "failure",
+          code: 500,
+          message:
+            "Error encountered when trying to delete avatar from temp directory!",
+        });
+      }
+      console.log("File deleted");
+    });
+
+    const user = req.user;
+    user.avatarURL = `../public/avatars/${file}`;
+    user.save();
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      data: { avatarURL: user.avatarURL },
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 export default {
   signup,
   signin,
   signout,
   getCurrentUser,
+  updateAvatar,
 };

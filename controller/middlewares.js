@@ -2,6 +2,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import passport from "passport";
 import { User } from "../service/schemas/user.js";
 import dotenv from "dotenv";
+import multer from "multer";
 
 dotenv.config();
 
@@ -35,3 +36,20 @@ export const auth = (req, res, next) => {
     next();
   })(req, res, next);
 };
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, "../tmp");
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname + "-" + uniqueSuffix);
+  },
+  limits: {
+    fileSize: 1048576,
+  },
+});
+
+export const upload = multer({
+  storage: storage,
+});
