@@ -2,6 +2,7 @@ import { Contact } from "./schemas/contact.js";
 import { User } from "./schemas/user.js";
 import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
+import { nanoid } from "nanoid";
 
 const addContact = ({ name, phone, email, favorite }) =>
   Contact.create({ name, phone, email, favorite });
@@ -27,12 +28,14 @@ const updateContactFavorite = (id, body) =>
 const addUser = async ({ email, password, subscription }) => {
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
+  const verificationToken = nanoid();
   const avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
   const newUser = await User.create({
     email,
     password: hashedPassword,
     subscription,
     avatarURL,
+    verificationToken,
   });
   const { password: pwd, ...userWithoutPassword } = newUser.toObject();
   return userWithoutPassword;
@@ -52,6 +55,11 @@ const loginUser = async ({ email, password: insertedPassword }) => {
 
 const getUserById = (id) => User.findOne({ _id: id });
 
+const getUserByVerificationToken = (verificationToken) =>
+  User.findOne({ verificationToken: verificationToken });
+
+const getUserByEmail = (email) => User.findOne({ email: email });
+
 export default {
   addContact,
   getAllContacts,
@@ -64,4 +72,6 @@ export default {
   getAllEmails,
   loginUser,
   getUserById,
+  getUserByVerificationToken,
+  getUserByEmail,
 };
