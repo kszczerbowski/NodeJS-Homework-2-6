@@ -19,3 +19,7 @@ router.patch(
   upload.single("myFile"),
   controlUser.updateAvatar
 );
+
+router.get("/verify/:verificationToken", controlUser.checkUser);
+
+router.post("/verify", controlUser.applyForAnotherMail);
